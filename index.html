@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- FONT AWESOME -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
@@ -18,13 +17,14 @@
 
 /* PERFECT SMOOTH MARQUEE — NO JHATKA */
 @keyframes marqueeFlow {
-    0%   { transform: translateX(0); }
+    0%    { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
 
 /* --- General Styling --- */
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -45,6 +45,9 @@ body {
     text-align: center;
     border: 3px solid gold;
     box-sizing: border-box;
+    /* Removed margin-bottom since the cow strip is now inside */
+    margin-bottom: 0; 
+    z-index: 10;
 }
 
 /* --- Header Logos --- */
@@ -105,8 +108,8 @@ body {
 }
 
 /* ===============================
-   CONTINUOUS MARQUEE (FIXED)
-   =============================== */
+    CONTINUOUS MARQUEE (Restored to animated)
+    =============================== */
 .marquee-container {
     overflow: hidden;
     white-space: nowrap;
@@ -118,7 +121,7 @@ body {
 .marquee-track {
     display: flex;
     width: max-content;
-    animation: marqueeFlow 7s linear infinite;
+    animation: marqueeFlow 7s linear infinite; /* Animation restored */
 }
 
 /* FINAL — ZERO GAP, ZERO JHATKA */
@@ -127,6 +130,7 @@ body {
     font-weight: 900;
     color: #a80000;
     padding-right: 8px;  
+    white-space: nowrap; /* Ensure text stays on one line for scrolling */
 }
 
 /* Hide headers */
@@ -137,7 +141,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 20px;
-    margin-bottom: 50px;
+    margin-bottom: 50px; /* Restored original margin */
 }
 
 .social-icons a {
@@ -202,6 +206,7 @@ body {
     box-shadow:0 2px 5px rgba(0,0,0,0.2);
     font-weight:bold;
     margin-top:20px;
+    margin-bottom: 20px; /* Added margin below button */
     animation:pulse 1s infinite ease-in-out;
 }
 
@@ -221,6 +226,31 @@ body {
     .mobile-break { display:none; }
 }
 
+/* ===============================
+    COW STRIP INSIDE CONTAINER FIX
+    =============================== */
+.cow-footer-image {
+    width: 100%; /* Take full width of the container */
+    margin-top: 10px; /* Space below the button */
+    margin-bottom: -40px; /* Move image down slightly to be near the border bottom */
+    position: relative;
+    overflow: hidden;
+}
+
+.cow-footer-image img {
+    /* To show only a portion of the wide image */
+    width: 300%; /* Make the image wider than the container */
+    max-width: 300%;
+    height: auto;
+    display: block;
+    /* Center the wide image so the middle portion is visible */
+    transform: translateX(-33%); 
+    object-fit: cover;
+}
+
+
+/* Remove the previous outer cow strip CSS, as it is now inside */
+.bottom-cow-strip { display: none; }
 </style>
 </head>
 
@@ -228,40 +258,37 @@ body {
 
 <div class="app-container">
 
-    <!-- LOGOS -->
     <div class="logo-container">
         <div class="side-logo-left">
             <img src="res/cow1.png"
-                 onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+1'">
+                    onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+1'">
         </div>
 
         <div class="main-logo">
             <img src="res/logo.png"
-                 onerror="this.src='https://placehold.co/80x80/a80000/ffffff?text=LOGO'">
+                    onerror="this.src='https://placehold.co/80x80/a80000/ffffff?text=LOGO'">
         </div>
 
         <div class="side-logo-right">
             <img src="res/cow2.png"
-                 onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+2'">
+                    onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+2'">
         </div>
     </div>
 
-    <!-- PERFECT NO-JHATKA MARQUEE -->
-<div class="marquee-container">
-    <div class="marquee-track">
+    <div class="marquee-container">
+        <div class="marquee-track">
 
-        <div class="marquee-item">
-            ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
+            <div class="marquee-item">
+                ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
+            </div>
+
+            <div class="marquee-item">
+                ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
+            </div>
+
         </div>
-
-        <div class="marquee-item">
-            ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
-        </div>
-
     </div>
-</div>
 
-    <!-- Social Icons -->
     <div class="social-icons">
 
         <a href="mailto:gausamman@gmail.com">
@@ -302,7 +329,6 @@ body {
 
     </div>
 
-    <!-- WEBSITE BUTTON -->
     <a href="https://www.gausamman.cloud/" target="_blank" class="website-button">
         <span class="mobile-text">🌐 Visit Official Website</span>
         <span class="desktop-text">🌐 Visit Official Website - </span>
@@ -310,7 +336,15 @@ body {
         <span class="url-text">www.gausamman.cloud</span>
     </a>
 
+    <div class="cow-footer-image">
+        <img src="res/cow3.png" 
+            alt="A strip of six cows feeding their calves"
+            onerror="this.src='https://placehold.co/1500x120/f0f0f0/888888?text=Cow+Strip+Image'">
+    </div>
 </div>
+
+<div class="bottom-cow-strip">
+    </div>
 
 </body>
 </html>

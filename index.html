@@ -10,9 +10,9 @@
 
 /* --- Animation Keyframes --- */
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
+    0% { transform: scale(1); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    50% { transform: scale(1.08); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+    100% { transform: scale(1); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 }
 
 /* PERFECT SMOOTH MARQUEE — NO JHATKA */
@@ -21,6 +21,7 @@
     100% { transform: translateX(-50%); }
 }
 
+/* --- General Styling --- */
 body {
     display: flex;
     flex-direction: column;
@@ -43,11 +44,13 @@ body {
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     text-align: center;
     border: 3px solid red;
+    box-sizing: border-box;
+    /* Removed margin-bottom since the cow strip is now inside */
     margin-bottom: 0; 
     z-index: 10;
 }
 
-/* Logos */
+/* --- Header Logos --- */
 .logo-container {
     margin-bottom: 20px;
     display: flex;
@@ -56,6 +59,7 @@ body {
     gap: 50px;
 }
 
+/* Main logo fix */
 .main-logo {
     width: 80px;
     height: 80px;
@@ -64,18 +68,22 @@ body {
     align-items: center;
     overflow: hidden;
     border-radius: 50%;
-    background-color: black;
+    background-color: black; /* black edge */
     padding: 2px;
+    box-sizing: border-box;
 }
 
 .main-logo img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
     border-radius: 50%;
     border: 2px solid gold;
+    display: block;
+    box-sizing: border-box;
 }
 
-/* Side logos */
+/* Side logos fix — black circle above golden */
 .side-logo-left, .side-logo-right {
     width: 60px;
     height: 60px;
@@ -83,19 +91,25 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    background-color: black;
-    padding: 2px;
+    background-color: black; /* thin black circle */
+    padding: 2px; /* thin spacing above golden */
+    box-sizing: border-box;
 }
 
 .side-logo-left img, .side-logo-right img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
     border-radius: 50%;
-    border: 2px solid #f9d97a;
-    background: white;
+    border: 2px solid #f9d97a; /* golden circle */
+    background-color: #ffffff;
+    display: block;
+    box-sizing: border-box;
 }
 
-/* Marquee */
+/* ===============================
+    CONTINUOUS MARQUEE (Restored to animated)
+    =============================== */
 .marquee-container {
     overflow: hidden;
     white-space: nowrap;
@@ -107,22 +121,39 @@ body {
 .marquee-track {
     display: flex;
     width: max-content;
-    animation: marqueeFlow 12s linear infinite;
+    animation: marqueeFlow 12s linear infinite; /* Animation restored */
 }
 
+/* FINAL — ZERO GAP, ZERO JHATKA */
 .marquee-item {
     font-size: 24px;
     font-weight: 900;
     color: #a80000;
-    padding-right: 8px;
+    padding-right: 8px;  
+    white-space: nowrap; /* Ensure text stays on one line for scrolling */
 }
 
-/* Social Icons */
+/* Hide headers */
+.header-text, .subheader-text { display: none; }
+
+/* Social Icons Grid */
 .social-icons {
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 20px;
-    margin-bottom: 50px;
+    margin-bottom: 50px; /* Restored original margin */
+}
+
+.social-icons a {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s ease-in-out;
+    justify-self: center;
+}
+
+.social-icons a:hover,
+.social-icons a:focus {
+    transform: scale(1.1);
 }
 
 .icon-wrapper {
@@ -134,11 +165,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .icon-wrapper i { font-size: 30px; }
 
-/* Connect Us */
+.icon-apple i { color:#888; }
+.icon-whatsapp i { color:#25D366; }
+.icon-youtube i { color:#FF0000; }
+.icon-spotify i { color:#1DB954; }
+.icon-mail i { color:#D44638; }
+.icon-twitter i { color:#1DA1F2; }
+.icon-instagram i { color:#C13584; }
+.icon-facebook i { color:#1877F2; }
+
+/* Connect Button */
 .connect-us {
     background-color:#a80000;
     color:white;
@@ -148,16 +189,15 @@ body {
     width:60px;
     height:60px;
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
 }
 
-/* -----------------------------------------------------
-   WEBSITE BUTTON — SAFRON BG + ZOOM-IN/ZOOM-OUT FIXED
------------------------------------------------------ */
+/* Website Button */
 .website-button {
     display:inline-block;
-    background-color:#FF9933;  /* SAFFRON */
+    background-color:#a80000;
     color:white;
     padding:10px 20px;
     border-radius:25px;
@@ -166,16 +206,13 @@ body {
     box-shadow:0 2px 5px rgba(0,0,0,0.2);
     font-weight:bold;
     margin-top:20px;
-    margin-bottom: 20px;
-
-    /* ONLY PULSE ZOOM — NO FLOAT MOVEMENT */
-    animation: pulse 1s infinite ease-in-out;
-    position: relative;
+    margin-bottom: 20px; /* Added margin below button */
+    animation:pulse 1s infinite ease-in-out;
 }
 
-.website-button:hover { background-color:#e57f00; }
+.website-button:hover { background-color:#880000; }
 
-.url-text { color:#ffe6cc; }
+.url-text { color:#ffccb3; }
 
 .mobile-text { display:inline; }
 .desktop-text { display:none; }
@@ -189,22 +226,31 @@ body {
     .mobile-break { display:none; }
 }
 
-/* Cow Strip */
+/* ===============================
+    COW STRIP INSIDE CONTAINER FIX
+    =============================== */
 .cow-footer-image {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: -40px;
+    width: 100%; /* Take full width of the container */
+    margin-top: 10px; /* Space below the button */
+    margin-bottom: -40px; /* Move image down slightly to be near the border bottom */
     position: relative;
     overflow: hidden;
 }
 
 .cow-footer-image img {
-    width: 300%;
-    transform: translateX(-33%);
+    /* To show only a portion of the wide image */
+    width: 300%; /* Make the image wider than the container */
+    max-width: 300%;
+    height: auto;
+    display: block;
+    /* Center the wide image so the middle portion is visible */
+    transform: translateX(-33%); 
+    object-fit: cover;
 }
 
-.bottom-cow-strip { display: none; }
 
+/* Remove the previous outer cow strip CSS, as it is now inside */
+.bottom-cow-strip { display: none; }
 </style>
 </head>
 
@@ -214,44 +260,76 @@ body {
 
     <div class="logo-container">
         <div class="side-logo-left">
-            <img src="res/cow1.png">
+            <img src="res/cow1.png"
+                    onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+1'">
         </div>
 
         <div class="main-logo">
-            <img src="res/logo.png">
+            <img src="res/logo.png"
+                    onerror="this.src='https://placehold.co/80x80/a80000/ffffff?text=LOGO'">
         </div>
 
         <div class="side-logo-right">
-            <img src="res/cow2.png">
+            <img src="res/cow2.png"
+                    onerror="this.src='https://placehold.co/60x60/f9d97a/a80000?text=Cow+Logo+2'">
         </div>
     </div>
 
     <div class="marquee-container">
         <div class="marquee-track">
+
             <div class="marquee-item">
                 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
             </div>
+
             <div class="marquee-item">
                 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄 ॐ गौ सम्मान आह्वान अभियान 🚩 🐄
             </div>
+
         </div>
     </div>
 
     <div class="social-icons">
 
-        <a><div class="icon-wrapper"><i class="fab fa-apple"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-whatsapp"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-youtube"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-spotify"></i></div></a>
-        <a><div class="icon-wrapper connect-us">Connect<br>Us</div></a>
-        <a><div class="icon-wrapper"><i class="fas fa-envelope"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-x-twitter"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-instagram"></i></div></a>
-        <a><div class="icon-wrapper"><i class="fab fa-facebook-f"></i></div></a>
+        <a href="mailto:gausamman@gmail.com">
+            <div class="icon-wrapper icon-apple"><i class="fab fa-apple"></i></div>
+        </a>
+
+        <a href="https://chat.whatsapp.com/EJKog7pvLFGLx7mzrts656" target="_blank">
+            <div class="icon-wrapper icon-whatsapp"><i class="fab fa-whatsapp"></i></div>
+        </a>
+
+        <a href="https://www.youtube.com/@Gausammanaahvaanabhiyaan" target="_blank">
+            <div class="icon-wrapper icon-youtube"><i class="fab fa-youtube"></i></div>
+        </a>
+
+        <a href="https://open.spotify.com/user/31hpaxs5skl43g65frugwkxyzfwm" target="_blank">
+            <div class="icon-wrapper icon-spotify"><i class="fab fa-spotify"></i></div>
+        </a>
+
+        <a href="https://www.gausamman.cloud/" target="_blank">
+            <div class="icon-wrapper connect-us">Connect<br>Us</div>
+        </a>
+
+        <a href="mailto:GSAabhiyan2027@gmail.com">
+            <div class="icon-wrapper icon-mail"><i class="fas fa-envelope"></i></div>
+        </a>
+
+        <a href="https://twitter.com/GSAA2027" target="_blank">
+            <div class="icon-wrapper icon-twitter"><i class="fab fa-x-twitter"></i></div>
+        </a>
+
+        <a href="https://www.instagram.com/gausmmaanaahvaan/" target="_blank">
+            <div class="icon-wrapper icon-instagram"><i class="fab fa-instagram"></i></div>
+        </a>
+
+        <a href="https://www.facebook.com/profile.php?id=61583545206576" target="_blank">
+            <div class="icon-wrapper icon-facebook"><i class="fab fa-facebook-f"></i></div>
+        </a>
 
     </div>
 
-    <a href="#" class="website-button">
+    <a href="https://www.gausamman.cloud/" target="_blank" class="website-button">
         <span class="mobile-text">🌐 Visit Official Website</span>
         <span class="desktop-text">🌐 Visit Official Website - </span>
         <br class="mobile-break">
@@ -259,9 +337,14 @@ body {
     </a>
 
     <div class="cow-footer-image">
-        <img src="res/cow3.png">
+        <img src="res/cow3.png" 
+            alt="A strip of six cows feeding their calves"
+            onerror="this.src='https://placehold.co/1500x120/f0f0f0/888888?text=Cow+Strip+Image'">
     </div>
 </div>
 
+<div class="bottom-cow-strip">
+    </div>
+
 </body>
-</html
+</html>

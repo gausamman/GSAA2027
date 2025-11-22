@@ -156,7 +156,7 @@ body {
     flex-direction: column;
     gap: 15px; /* Spacing between steps */
     margin-top: 20px;
-    margin-bottom: 35px; /* Marquee से पहले गैप */
+    margin-bottom: 30px; /* Marquee से पहले गैप */
     padding: 0 5px; 
     width: 100%;
     box-sizing: border-box;
@@ -170,6 +170,10 @@ body {
     border: 3px solid #FF9933; /* Orange/Yellow border for highlight */
     background-color: #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    /* FIX: Added to remove the small vertical gap below the image */
+    line-height: 0; 
+    font-size: 0;
 }
 
 .step-image-item:hover {
@@ -183,7 +187,6 @@ body {
     display: block;
     object-fit: cover;
 }
-
 /* --- Marquee, Logos, Social Icons, Buttons --- */
 .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; margin: 25px 0 40px 0; background-color: transparent; padding: 0; box-shadow: none; }
 .marquee-track { display: flex; width: max-content; animation: marqueeFlow 12s linear infinite; }

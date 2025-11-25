@@ -243,7 +243,7 @@ body {
 
 /* ===============================
     COW STRIP INSIDE CONTAINER FIX (UPDATED)
-   =============================== */
+    =============================== */
 .gsa-cow-strip {
     width: calc(100% + 40px); /* Compensate for parent padding (20px left + 20px right) */
     margin-left: -20px;
@@ -290,16 +290,57 @@ body {
     }
 }
 
+/* --- NEW: Floating Call Button Styling --- */
+.floating-call-button {
+    position: fixed; /* स्क्रीन पर फिक्स्ड पोजीशन */
+    bottom: 30px; /* नीचे से दूरी */
+    right: 30px; /* दाएं से दूरी */
+    width: 50px; /* चौड़ाई */
+    height: 50px; /* ऊँचाई */
+    background-color: #25D366; /* बैकग्राउंड कलर (व्हाट्सएप ग्रीन) */
+    color: white; /* आइकन कलर */
+    border-radius: 50%; /* गोल आकार */
+    text-align: center;
+    line-height: 50px; /* आइकन को बीच में लाने के लिए */
+    font-size: 24px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    z-index: 1000; /* सुनिश्चित करें कि यह सभी के ऊपर दिखे */
+    animation: pulse 1.5s infinite ease-in-out; /* मौजूदा पल्स एनीमेशन का उपयोग */
+    text-decoration: none; /* अंडरलाइन हटाएँ */
+    display: flex; /* आइकन को सेंटर करने के लिए */
+    justify-content: center;
+    align-items: center;
+}
+
+.floating-call-button:hover {
+    background-color: #1DA851;
+    transform: scale(1.05);
+}
+
+/* डेस्कटॉप के लिए थोड़ी बड़ी साइज */
+@media(min-width:768px){
+    .floating-call-button {
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        font-size: 30px;
+        bottom: 40px;
+        right: 40px;
+    }
+}
+/* --- END: Floating Call Button Styling --- */
 </style>
 </head>
 
 <body>
-
-    <div class="gsa-header-main">
+<a href="tel:+919044288612" class="floating-call-button" aria-label="कॉल करें">
+    <i class="fas fa-phone"></i>
+</a>
+<div class="gsa-header-main">
         <div class="gsa-logo-wrapper-main">
             <img src="res/logo.png"
-                 onerror="this.src='https://placehold.co/70x70/FFA000/A03B00?text=LOGO'"
-                 alt="गो सम्मान आह्वान अभियान Logo" class="gsa-logo-main">
+                    onerror="this.src='https://placehold.co/70x70/FFA000/A03B00?text=LOGO'"
+                    alt="गो सम्मान आह्वान अभियान Logo" class="gsa-logo-main">
             <div class="gsa-title-group-main">
                 <span class="gsa-title-main gsa-title-red-main">गो सम्मान</span>
                 <span class="gsa-title-main gsa-title-brown-main">आह्वान अभियान</span>
@@ -331,9 +372,9 @@ body {
     <div class="gsa-image-steps">
         <div class="step-image-item">
             <img src="res/pdf.png"
-                 onerror="this.src='https://placehold.co/500x300/F4D03F/A03B00?text=Step+1+Image'"
-                 alt="गो सम्मान आह्वान अभियान">
-       
+                    onerror="this.src='https://placehold.co/500x300/F4D03F/A03B00?text=Step+1+Image'"
+                    alt="गो सम्मान आह्वान अभियान" class="pdf-image">
+        
         </div>
     </div>
     <div class="marquee-container">
@@ -387,8 +428,8 @@ body {
 
     <div class="gsa-cow-strip">
         <img src="res/cow3.png" 
-             onerror="this.src='https://placehold.co/360x70/808080/FFFFFF?text=Cow+Strip'"
-             alt="गो सम्मान आह्वान अभियान गाय" class="gsa-cow-image">
+                onerror="this.src='https://placehold.co/360x70/808080/FFFFFF?text=Cow+Strip'"
+                alt="गो सम्मान आह्वान अभियान गाय" class="gsa-cow-image">
     </div>
 
 </div>

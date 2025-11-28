@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Complete Admin CMS (Static / GitHub Pages)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#A80000;
+    --gold:#ffbb00;
+    --bg-dark:#0d0d0d;
+    --card:#ffffff;
+    --muted:#6b6b6b;
+  }
+  *{box-sizing:border-box}
+  body{font-family:'Poppins',sans-serif;margin:0;background:linear-gradient(180deg,#0d0d0d,#1b1b1b);color:#111;min-height:100vh}
+  .wrap{max-width:1100px;margin:18px auto;padding:18px}
+  header.site{display:flex;align-items:center;gap:12px;color:white}
+  header.site img{width:56px;height:56px;border-radius:10px;border:3px solid #FFA000;object-fit:cover}
+  header.site h1{font-size:20px;margin:0}
+  .login-card{max-width:420px;margin:30px auto;padding:26px;border-radius:14px;background:rgba(255,255,255,0.04);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08);color:#fff}
+  label{display:block;margin-bottom:6px;font-weight:600}
+  input[type=text],input[type=password],input[type=email],textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;margin-bottom:12px}
+  input[type=file]{margin-bottom:12px;color:#fff}
+  .btn{display:inline-block;padding:10px 14px;background:var(--gold);color:#000;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;border:2px solid rgba(255,255,255,0.12);color:#fff}
+  .note{font-size:13px;color:#ddd;margin-top:8px}
+  .center{text-align:center}
+  .error{color:#ffd2d2;background:#6b0000a0;padding:8px;border-radius:8px;margin-bottom:12px}
+  #adminApp{display:none;background:#f6f7f9;min-height:80vh;color:#111;padding-bottom:60px}
+  nav.top{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#111;color:#fff;position:sticky;top:0;z-index:50}
+  nav.top .left{display:flex;gap:12px;align-items:center}
+  nav.top a{color:#fff;text-decoration:none;font-weight:700;margin-right:10px}
+  .main{display:flex;gap:18px;padding:20px}
+  .sidebar{width:260px}
+  .content{flex:1}
+  .card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(11,11,11,0.06);margin-bottom:18px}
+  .small{font-size:13px;color:var(--muted)}
+  .list-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;border:1px solid #eee;margin-bottom:8px}
+  .thumb{width:90px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
+  .flex{display:flex;gap:12px;align-items:center}
+  .actions button{margin-left:6px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  footer{padding:12px;text-align:center;color:#777}
+  .tag{display:inline-block;padding:6px 8px;background:#f0f0f0;border-radius:8px;font-weight:600}
+  @media(max-width:900px){.main{flex-direction:column}.sidebar{width:100%}}
+  body.login-mode{background:linear-gradient(135deg,#0d0d0d,#1f1f1f)}
+  ::placeholder{color:rgba(255,255,255,0.6)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="site" id="siteHeader" style="display:none">
+    <img id="siteLogo" src="" alt="logo" onerror="this.src='https://placehold.co/70x70/FFA000/A03B00?text=LOGO'"/>
+    <div>
+      <h1 id="siteTitle">गो सम्मान — Admin</h1>
+      <div class="small" id="siteSubtitle">Static Admin CMS (LocalStorage)</div>
+    </div>
+  </header>
+
+  <div id="loginView" class="login-card" style="display:none">
+    <h2 style="margin-top:0;color:#fff">Admin Login</h2>
+    <div id="firstRunNotice" class="card" style="background:transparent;border:none;padding:0;margin-bottom:12px;color:#fff"></div>
+
+    <div id="loginError" style="display:none" class="error"></div>
+    <label>Username</label>
+    <input id="login_username" type="text" placeholder="username">
+
+    <label>Password</label>
+    <input id="login_password" type="password" placeholder="password">
+
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn" onclick="handleLogin()">Login</button>
+      <button class="btn ghost" onclick="showForgot()">Forgot?</button>
+    </div>
+
+    <div class="note">Use account credentials to login. Set recovery email in Settings after login.</div>
+  </div>
+
+  <div id="forgotView" class="login-card" style="display:none">
+    <h2 style="color:#fff">Forgot Password (Recovery Email)</h2>
+    <div class="small" style="margin-bottom:8px;color:#ddd">Enter username, recovery email and new password.</div>
+    <div id="forgotError" class="error" style="display:none"></div>
+
+    <label>Username</label>
+    <input id="forgot_username" type="text" placeholder="username">
+
+    <label>Recovery Email</label>
+    <input id="forgot_email" type="email" placeholder="your@email.com">
+
+    <label>New Password</label>
+    <input id="forgot_newpass" type="password" placeholder="new password">
+
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="handleForgot()">Reset Password</button>
+      <button class="btn ghost" onclick="showLogin()">Back to Login</button>
+    </div>
+  </div>
+
+  <div id="adminApp" style="display:none">
+    <nav class="top">
+      <div class="left">
+        <img id="miniLogo" src="" alt="logo" style="width:42px;height:42px;border-radius:8px;object-fit:cover;border:2px solid #FFA000" onerror="this.src='https://placehold.co/70x70/FFA000/A03B00?text=LOGO'"/>
+        <div>
+          <div id="topTitle" style="font-weight:700;color:#fff">गो सम्मान — Admin</div>
+          <div class="small" id="topSub" style="color:#ddd">Manage site content (local)</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn ghost" onclick="openExport()">Backup</button>
+        <button class="btn ghost" onclick="openImport()">Restore</button>
+        <button class="btn" onclick="logoutAdmin()">Logout</button>
+      </div>
+    </nav>
+
+    <div class="main">
+      <aside class="sidebar">
+        <div class="card">
+          <h3>Admin Menu</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+            <a href="#" onclick="showSection('hero')">Hero / Content</a>
+            <a href="#" onclick="showSection('services')">Services</a>
+            <a href="#" onclick="showSection('products')">Products</a>
+            <a href="#" onclick="showSection('gallery')">Gallery</a>
+            <a href="#" onclick="showSection('uploads')">Logo & Banner</a>
+            <a href="#" onclick="showSection('subs')">Sub-admins</a>
+            <a href="#" onclick="showSection('settings')">Settings</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Quick Stats</h4>
+          <div class="small">Services: <span id="statServices">0</span></div>
+          <div class="small">Products: <span id="statProducts">0</span></div>
+          <div class="small">Gallery: <span id="statGallery">0</span></div>
+          <div class="small">Sub-admins: <span id="statSubs">0</span></div>
+        </div>
+
+        <div class="card">
+          <h4>Export / Import</h4>
+          <div class="small">Create a JSON backup or restore data.</div>
+          <div style="margin-top:8px">
+            <button class="btn" onclick="exportBackup()">Export JSON</button>
+            <input id="importFile" type="file" accept="application/json" style="margin-top:8px" onchange="importBackup(event)">
+          </div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <div id="section_dashboard" class="card sectionView">
+          <h2>Dashboard</h2>
+          <div class="small">Welcome, <span id="adminNameDisplay"></span></div>
+          <div style="margin-top:12px">
+            <div class="card">
+              <h4>Site Preview (Client-side)</h4>
+              <div id="previewHero" style="padding:12px;background:#fafafa;border-radius:8px">
+                <h3 id="previewHeroTitle">—</h3>
+                <p id="previewHeroDesc">—</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <h4>Quick Actions</h4>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" onclick="showSection('hero')">Edit Hero</button>
+                <button class="btn" onclick="showSection('services')">Manage Services</button>
+                <button class="btn" onclick="showSection('products')">Manage Products</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section_hero" class="card sectionView" style="display:none">
+          <h2>Hero / Site Content</h2>
+          <label>Site Title</label>
+          <input id="site_title" type="text" placeholder="Website Title">
+
+          <label>Site Subtitle</label>
+          <input id="site_subtitle" type="text" placeholder="Short subtitle">
+
+          <label>Hero Title</label>
+          <input id="hero_title" type="text" placeholder="Big heading">
+
+          <label>Hero Description</label>
+          <textarea id="hero_desc" rows="4" placeholder="Description"></textarea>
+
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="saveHero()">Save</button>
+            <button class="btn ghost" onclick="loadHero()">Reload</button>
+          </div>
+        </div>
+
+        <div id="section_services" class="card sectionView" style="display:none">
+          <h2>Services Manager</h2>
+
+          <div class="split" style="margin-bottom:12px">
+            <div>
+              <label>Service Name</label>
+              <input id="service_name" type="text" placeholder="Service name">
+            </div>
+            <div>
+              <label>Price / Tag</label>
+              <input id="service_price" type="text" placeholder="Optional price or tag">
+            </div>
+          </div>
+
+          <label>Details</label>
+          <textarea id="service_details" rows="3" placeholder="Short details"></textarea>
+
+          <label>Image (optional)</label>
+          <input id="service_image" type="file" accept="image/*" onchange="readPreview(event,'service')">
+          <img id="service_preview" class="thumb" style="display:none">
+
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="addService()">Add Service</button>
+            <button class="btn ghost" onclick="clearServiceForm()">Clear</button>
+          </div>
+
+          <hr style="margin:16px 0">
+          <div id="servicesList"></div>
+        </div>
+
+        <div id="section_products" class="card sectionView" style="display:none">
+          <h2>Product Manager</h2>
+
+          <div class="split" style="margin-bottom:12px">
+            <div>
+              <label>Product Name</label>
+              <input id="product_name" type="text" placeholder="Product name">
+            </div>
+            <div>
+              <label>Price</label>
+              <input id="product_price" type="text" placeholder="Price">
+            </div>
+          </div>
+
+          <label>Description</label>
+          <textarea id="product_desc" rows="3" placeholder="Description"></textarea>
+
+          <label>Image</label>
+          <input id="product_image" type="file" accept="image/*" onchange="readPreview(event,'product')">
+          <img id="product_preview" class="thumb" style="display:none">
+
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="addProduct()">Add Product</button>
+            <button class="btn ghost" onclick="clearProductForm()">Clear</button>
+          </div>
+
+          <hr style="margin:16px 0">
+          <div id="productsList"></div>
+        </div>
+
+        <div id="section_gallery" class="card sectionView" style="display:none">
+          <h2>Gallery Manager</h2>
+          <label>Upload Photos</label>
+          <input id="gallery_input" type="file" accept="image/*" multiple onchange="readGallery(event)">
+          <div id="galleryList" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+        </div>
+
+        <div id="section_uploads" class="card sectionView" style="display:none">
+          <h2>Logo & Banner</h2>
+          <label>Site Logo</label>
+          <input id="logo_input" type="file" accept="image/*" onchange="readPreview(event,'logo')">
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <img id="logo_preview" src="" style="width:90px;height:60px;display:none;object-fit:cover;border-radius:8px;border:1px solid #ddd">
+            <div>
+              <button class="btn" onclick="saveLogo()">Save Logo</button>
+              <button class="btn ghost" onclick="removeLogo()">Remove</button>
+            </div>
+          </div>
+
+          <hr style="margin:14px 0">
+
+          <label>Hero Banner</label>
+          <input id="banner_input" type="file" accept="image/*" onchange="readPreview(event,'banner')">
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <img id="banner_preview" src="" style="width:220px;height:90px;display:none;object-fit:cover;border-radius:8px;border:1px solid #ddd">
+            <div>
+              <button class="btn" onclick="saveBanner()">Save Banner</button>
+              <button class="btn ghost" onclick="removeBanner()">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="section_subs" class="card sectionView" style="display:none">
+          <h2>Sub-admins</h2>
+
+          <div style="display:grid;grid-template-columns:1fr 200px;gap:12px">
+            <div>
+              <label>Name</label>
+              <input id="sub_name" type="text" placeholder="Name">
+              <label>Username (email preferred)</label>
+              <input id="sub_username" type="text" placeholder="username">
+              <label>Password</label>
+              <input id="sub_pass" type="password" placeholder="password">
+              <label>Role</label>
+              <select id="sub_role"><option value="editor">Editor</option><option value="uploader">Uploader</option><option value="viewer">Viewer</option></select>
+              <div style="margin-top:8px">
+                <button class="btn" onclick="addSub()">Add Sub-admin</button>
+                <button class="btn ghost" onclick="clearSubForm()">Clear</button>
+              </div>
+            </div>
+            <div>
+              <h4>Existing Sub-admins</h4>
+              <div id="subsList" style="max-height:300px;overflow:auto"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="section_settings" class="card sectionView" style="display:none">
+          <h2>Settings</h2>
+          <label>Admin Username</label>
+          <input id="setting_admin_user" type="text" placeholder="username">
+          <label>Change Admin Password (current required)</label>
+          <input id="setting_curr_pass" type="password" placeholder="current password">
+          <input id="setting_new_pass" type="password" placeholder="new password">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="changeAdminPassword()">Change Password</button>
+            <button class="btn ghost" onclick="changeAdminUsername()">Change Username</button>
+          </div>
+
+          <hr style="margin:12px 0">
+
+          <label>Recovery Email (admin)</label>
+          <input id="setting_recovery_email" type="email" placeholder="recovery@email.com">
+          <div style="margin-top:8px">
+            <button class="btn" onclick="saveRecovery()">Save Recovery Email</button>
+          </div>
+
+          <hr style="margin:12px 0">
+          <h4>Danger</h4>
+          <div class="small">You can reset all data. Use export first.</div>
+          <div style="margin-top:8px">
+            <button class="btn ghost" style="background:#ffdddd;color:#990000" onclick="wipeAll()">Reset All Data</button>
+          </div>
+        </div>
+
+        <div id="exportModal" class="card" style="display:none">
+          <h3>Export / Backup JSON</h3>
+          <textarea id="exportText" rows="8" style="width:100%"></textarea>
+          <div style="margin-top:8px">
+            <button class="btn" onclick="downloadBackup()">Download .json</button>
+            <button class="btn ghost" onclick="closeExport()">Close</button>
+          </div>
+        </div>
+
+        <div id="importModal" class="card" style="display:none">
+          <h3>Import JSON</h3>
+          <div class="small">Select a previously exported JSON file to restore.</div>
+          <input id="importFile2" type="file" accept="application/json" onchange="importBackup(event)">
+          <div style="margin-top:8px"><button class="btn ghost" onclick="closeImport()">Close</button></div>
+        </div>
+
+      </section>
+    </div>
+
+    <footer>Static Admin CMS — stored in browser (localStorage)</footer>
+  </div>
+
+</div>
+
+<script>
+const LS = {
+  get(key, def=null){ try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e){ return def } },
+  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); },
+  remove(key){ localStorage.removeItem(key); }
+};
+
+async function sha256hex(str){
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  const arr = Array.from(new Uint8Array(hash));
+  return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function initDefault(){
+  if(!LS.get('cms_data')){
+    const defaultData = {
+      site: {title:'गो सम्मान', subtitle:'आह्वान अभियान'},
+      hero: {title:'गो सम्मान आह्वान अभियान', desc:'Protect cows. Spread awareness.'},
+      services: [], products: [], gallery: [], logo: null, banner: null, users: []
+    };
+    LS.set('cms_data', defaultData);
+  }
+  let admin = LS.get('admin_account');
+  if(!admin){
+    const passHash = await sha256hex('admin123');
+    const defaultAdmin = { username:'admin', passwordHash:passHash, created: new Date().toISOString(), recoveryEmail: null };
+    LS.set('admin_account', defaultAdmin);
+  }
+  renderFirstRunNotice();
+}
+
+function showLogin(){
+  document.body.classList.add('login-mode');
+  document.getElementById('loginView').style.display='block';
+  document.getElementById('forgotView').style.display='none';
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('siteHeader').style.display='none';
+  document.getElementById('firstRunNotice').style.display='block';
+}
+
+function showForgot(){
+  document.body.classList.add('login-mode');
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('forgotView').style.display='block';
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('siteHeader').style.display='none';
+}
+
+function renderFirstRunNotice(){
+  const admin = LS.get('admin_account');
+  const el = document.getElementById('firstRunNotice');
+  el.innerHTML = <div class="small">Admin username: <strong>${admin.username}</strong>. Please set recovery email in Settings after login.</div>;
+}
+
+async function handleLogin(){
+  const u = document.getElementById('login_username').value.trim();
+  const p = document.getElementById('login_password').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display='none';
+  if(!u || !p){ errEl.textContent='Enter username and password'; errEl.style.display='block'; return; }
+  const admin = LS.get('admin_account');
+  if(admin && u === admin.username){
+    const hash = await sha256hex(p);
+    if(hash === admin.passwordHash){
+      localStorage.setItem('cms_logged', JSON.stringify({username:admin.username, role:'admin'}));
+      openAdmin(); return;
+    }
+  }
+  const data = LS.get('cms_data');
+  const subs = data.users || [];
+  for(const s of subs){
+    if(s.username === u){
+      const h = await sha256hex(p);
+      if(h === s.passwordHash){
+        localStorage.setItem('cms_logged', JSON.stringify({username:s.username, role:s.role}));
+        openAdmin(); return;
+      }
+    }
+  }
+  errEl.textContent = 'Invalid credentials'; errEl.style.display='block';
+}
+
+async function handleForgot(){
+  const u = document.getElementById('forgot_username').value.trim();
+  const email = document.getElementById('forgot_email').value.trim();
+  const newpass = document.getElementById('forgot_newpass').value;
+  const err = document.getElementById('forgotError');
+  err.style.display='none';
+  if(!u || !email || !newpass){ err.textContent='All fields required'; err.style.display='block'; return; }
+
+  const admin = LS.get('admin_account');
+  if(admin && u === admin.username){
+    if(admin.recoveryEmail && admin.recoveryEmail === email){
+      admin.passwordHash = await sha256hex(newpass);
+      LS.set('admin_account', admin);
+      alert('Password reset. Please login with new password.');
+      showLogin(); return;
+    } else { err.textContent='Recovery email does not match'; err.style.display='block'; return; }
+  }
+  const data = LS.get('cms_data'); const idx = (data.users||[]).findIndex(x=>x.username===u);
+  if(idx >= 0){
+    if(data.users[idx].recoveryEmail && data.users[idx].recoveryEmail === email){
+      data.users[idx].passwordHash = await sha256hex(newpass);
+      LS.set('cms_data', data);
+      alert('Sub-admin password reset. Please login.'); showLogin(); return;
+    } else { err.textContent='Sub-admin recovery email mismatch'; err.style.display='block'; return; }
+  }
+  err.textContent='User not found'; err.style.display='block';
+}
+
+function openAdmin(){
+  document.body.classList.remove('login-mode');
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('forgotView').style.display='none';
+  document.getElementById('adminApp').style.display='block';
+  document.getElementById('siteHeader').style.display='flex';
+  loadAll();
+}
+
+function loadAll(){
+  const data = LS.get('cms_data');
+  const adminAcc = LS.get('admin_account');
+  document.getElementById('adminNameDisplay').textContent = (JSON.parse(localStorage.getItem('cms_logged'))||{}).username || adminAcc.username;
+  document.getElementById('site_title').value = data.site.title || '';
+  document.getElementById('site_subtitle').value = data.site.subtitle || '';
+  document.getElementById('hero_title').value = data.hero.title || '';
+  document.getElementById('hero_desc').value = data.hero.desc || '';
+  updatePreview();
+  if(data.logo){ document.getElementById('logo_preview').src = data.logo; document.getElementById('logo_preview').style.display='block'; }
+  if(data.banner){ document.getElementById('banner_preview').src = data.banner; document.getElementById('banner_preview').style.display='block'; }
+  document.getElementById('miniLogo').src = data.logo || '';
+  document.getElementById('siteLogo').src = data.logo || '';
+  renderServices(); renderProducts(); renderGallery(); renderSubs();
+  document.getElementById('statServices').textContent = (data.services||[]).length;
+  document.getElementById('statProducts').textContent = (data.products||[]).length;
+  document.getElementById('statGallery').textContent = (data.gallery||[]).length;
+  document.getElementById('statSubs').textContent = (data.users||[]).length;
+}
+
+function saveHero(){
+  const data = LS.get('cms_data');
+  data.site.title = document.getElementById('site_title').value;
+  data.site.subtitle = document.getElementById('site_subtitle').value;
+  data.hero.title = document.getElementById('hero_title').value;
+  data.hero.desc = document.getElementById('hero_desc').value;
+  LS.set('cms_data', data);
+  alert('Hero & site saved'); updatePreview();
+}
+
+function readPreview(evt, type){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    if(type === 'service'){
+      document.getElementById('service_preview').src = e.target.result;
+      document.getElementById('service_preview').style.display = 'block';
+      document.getElementById('service_preview').dataset.raw = e.target.result;
+    } else if(type === 'product'){
+      document.getElementById('product_preview').src = e.target.result;
+      document.getElementById('product_preview').style.display = 'block';
+      document.getElementById('product_preview').dataset.raw = e.target.result;
+    } else if(type === 'logo'){
+      document.getElementById('logo_preview').src = e.target.result;
+      document.getElementById('logo_preview').style.display = 'block';
+      document.getElementById('logo_preview').dataset.raw = e.target.result;
+    } else if(type === 'banner'){
+      document.getElementById('banner_preview').src = e.target.result;
+      document.getElementById('banner_preview').style.display = 'block';
+      document.getElementById('banner_preview').dataset.raw = e.target.result;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function addService(){
+  const name = document.getElementById('service_name').value.trim();
+  const price = document.getElementById('service_price').value.trim();
+  const details = document.getElementById('service_details').value.trim();
+  const img = document.getElementById('service_preview').dataset.raw || null;
+  if(!name) return alert('Enter service name');
+  const data = LS.get('cms_data');
+  data.services = data.services || [];
+  data.services.push({id:Date.now(), name, price, details, img});
+  LS.set('cms_data', data);
+  clearServiceForm(); renderServices(); alert('Service added');
+}
+
+function renderServices(){
+  const data = LS.get('cms_data');
+  const list = document.getElementById('servicesList');
+  list.innerHTML = '';
+  (data.services||[]).slice().reverse().forEach(s=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    div.innerHTML = <div class="flex"><div style="min-width:220px"><b>${s.name}</b><div class="small">${s.price||''}</div><div class="small">${s.details}</div></div>${s.img?<img src="${s.img}" class="thumb">`:''}</div>
+      <div class="actions">
+        <button class="btn ghost" onclick='editService(${s.id})'>Edit</button>
+        <button class="btn" onclick='deleteService(${s.id})'>Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function clearServiceForm(){
+  document.getElementById('service_name').value='';
+  document.getElementById('service_price').value='';
+  document.getElementById('service_details').value='';
+  document.getElementById('service_preview').style.display='none';
+  delete document.getElementById('service_preview').dataset.raw;
+}
+
+function deleteService(id){
+  if(!confirm('Delete this service?')) return;
+  const data = LS.get('cms_data');
+  data.services = (data.services||[]).filter(s=>s.id!==id);
+  LS.set('cms_data', data);
+  renderServices();
+}
+
+function editService(id){
+  const data = LS.get('cms_data');
+  const s = (data.services||[]).find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('service_name').value = s.name;
+  document.getElementById('service_price').value = s.price||'';
+  document.getElementById('service_details').value = s.details||'';
+  if(s.img){ document.getElementById('service_preview').src=s.img; document.getElementById('service_preview').style.display='block'; document.getElementById('service_preview').dataset.raw=s.img; }
+  deleteService(id);
+}
+
+function addProduct(){
+  const name = document.getElementById('product_name').value.trim();
+  const price = document.getElementById('product_price').value.trim();
+  const desc = document.getElementById('product_desc').value.trim();
+  const img = document.getElementById('product_preview').dataset.raw || null;
+  if(!name) return alert('Enter product name');
+  const data = LS.get('cms_data');
+  data.products = data.products || [];
+  data.products.push({id:Date.now(), name, price, desc, img});
+  LS.set('cms_data', data);
+  clearProductForm(); renderProducts(); alert('Product added');
+}
+
+function renderProducts(){
+  const data = LS.get('cms_data');
+  const list = document.getElementById('productsList');
+  list.innerHTML='';
+  (data.products||[]).slice().reverse().forEach(p=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    div.innerHTML = <div class="flex"><div style="min-width:220px"><b>${p.name}</b><div class="small">${p.price||''}</div><div class="small">${p.desc||''}</div></div>${p.img?<img src="${p.img}" class="thumb">`:''}</div>
+      <div class="actions">
+        <button class="btn ghost" onclick='editProduct(${p.id})'>Edit</button>
+        <button class="btn" onclick='deleteProduct(${p.id})'>Delete</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function clearProductForm(){
+  document.getElementById('product_name').value='';
+  document.getElementById('product_price').value='';
+  document.getElementById('product_desc').value='';
+  document.getElementById('product_preview').style.display='none';
+  delete document.getElementById('product_preview').dataset.raw;
+}
+
+function deleteProduct(id){
+  if(!confirm('Delete this product?')) return;
+  const data = LS.get('cms_data');
+  data.products = (data.products||[]).filter(p=>p.id!==id);
+  LS.set('cms_data', data);
+  renderProducts();
+}
+
+function editProduct(id){
+  const data = LS.get('cms_data');
+  const p = (data.products||[]).find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('product_name').value = p.name;
+  document.getElementById('product_price').value = p.price||'';
+  document.getElementById('product_desc').value = p.desc||'';
+  if(p.img){ document.getElementById('product_preview').src=p.img; document.getElementById('product_preview').style.display='block'; document.getElementById('product_preview').dataset.raw=p.img; }
+  deleteProduct(id);
+}
+
+function readGallery(evt){
+  const files = Array.from(evt.target.files || []);
+  if(!files.length) return;
+  const readers = files.map(f => new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = e=>res(e.target.result);
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  }));
+  Promise.all(readers).then(images=>{
+    const data = LS.get('cms_data');
+    data.gallery = data.gallery || [];
+    images.forEach(img => data.gallery.push({id:Date.now()+Math.random(), src:img}));
+    LS.set('cms_data', data);
+    renderGallery(); alert('Gallery images saved (local).');
+  });
+}
+
+function renderGallery(){
+  const data = LS.get('cms_data');
+  const container = document.getElementById('galleryList');
+  container.innerHTML = '';
+  (data.gallery||[]).slice().reverse().forEach(g=>{
+    const div = document.createElement('div');
+    div.style= 'position:relative';
+    div.innerHTML = `<img src="${g.src}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid #ddd" />
+      <div style="position:absolute;top:8px;right:8px"><button class="btn ghost" onclick='deleteGallery("${g.id}")'>Delete</button></div>`;
+    container.appendChild(div);
+  });
+}
+
+function deleteGallery(id){
+  if(!confirm('Delete this image?')) return;
+  const data = LS.get('cms_data');
+  data.gallery = (data.gallery||[]).filter(x=>String(x.id)!==String(id));
+  LS.set('cms_data', data);
+  renderGallery();
+}
+
+function saveLogo(){
+  const raw = document.getElementById('logo_preview').dataset.raw;
+  if(!raw) return alert('Choose logo first');
+  const data = LS.get('cms_data');
+  data.logo = raw;
+  LS.set('cms_data', data);
+  document.getElementById('miniLogo').src = raw;
+  document.getElementById('siteLogo').src = raw;
+  alert('Logo saved');
+}
+
+function removeLogo(){
+  const data = LS.get('cms_data');
+  data.logo = null;
+  LS.set('cms_data', data);
+  document.getElementById('logo_preview').style.display='none';
+  document.getElementById('miniLogo').src = '';
+  document.getElementById('siteLogo').src = '';
+}
+
+function saveBanner(){
+  const raw = document.getElementById('banner_preview').dataset.raw;
+  if(!raw) return alert('Choose banner first');
+  const data = LS.get('cms_data');
+  data.banner = raw;
+  LS.set('cms_data', data);
+  alert('Banner saved');
+}
+function removeBanner(){
+  const data = LS.get('cms_data');
+  data.banner = null;
+  LS.set('cms_data', data);
+  document.getElementById('banner_preview').style.display='none';
+}
+
+async function addSub(){
+  const name = document.getElementById('sub_name').value.trim();
+  const username = document.getElementById('sub_username').value.trim();
+  const pass = document.getElementById('sub_pass').value;
+  const role = document.getElementById('sub_role').value;
+  if(!name||!username||!pass) return alert('Fill all fields');
+  const data = LS.get('cms_data');
+  data.users = data.users || [];
+  if(data.users.some(u=>u.username===username) || (LS.get('admin_account') && LS.get('admin_account').username===username)){
+    return alert('Username already exists');
+  }
+  const ph = await sha256hex(pass);
+  data.users.push({id:Date.now(), name, username, passwordHash:ph, role, created:new Date().toISOString(), recoveryEmail:null});
+  LS.set('cms_data', data);
+  renderSubs(); clearSubForm(); alert('Sub-admin added');
+}
+
+function renderSubs(){
+  const data = LS.get('cms_data');
+  const list = document.getElementById('subsList');
+  list.innerHTML = '';
+  (data.users||[]).forEach(s=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    div.innerHTML = `<div style="min-width:200px"><b>${s.name}</b><div class="small">${s.username} • ${s.role}</div></div>
+      <div><button class="btn ghost" onclick='editSub(${s.id})'>Edit</button><button class="btn" onclick='deleteSub(${s.id})'>Delete</button></div>`;
+    list.appendChild(div);
+  });
+}
+
+function clearSubForm(){ document.getElementById('sub_name').value=''; document.getElementById('sub_username').value=''; document.getElementById('sub_pass').value=''; document.getElementById('sub_role').value='editor'; }
+
+function deleteSub(id){
+  if(!confirm('Delete sub-admin?')) return;
+  const data = LS.get('cms_data');
+  data.users = (data.users||[]).filter(u=>u.id!==id);
+  LS.set('cms_data', data);
+  renderSubs();
+}
+
+function editSub(id){
+  const data = LS.get('cms_data');
+  const s = (data.users||[]).find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('sub_name').value = s.name;
+  document.getElementById('sub_username').value = s.username;
+  document.getElementById('sub_pass').value = '';
+  document.getElementById('sub_role').value = s.role;
+  deleteSub(id);
+}
+
+async function changeAdminUsername(){
+  const newUser = document.getElementById('setting_admin_user').value.trim();
+  if(!newUser) return alert('Enter new username');
+  const admin = LS.get('admin_account');
+  admin.username = newUser; LS.set('admin_account', admin);
+  alert('Admin username changed (logout required)');
+}
+
+async function changeAdminPassword(){
+  const curr = document.getElementById('setting_curr_pass').value;
+  const nw = document.getElementById('setting_new_pass').value;
+  if(!curr || !nw) return alert('Enter current and new password');
+  const admin = LS.get('admin_account');
+  const currHash = await sha256hex(curr);
+  if(currHash !== admin.passwordHash) return alert('Current password incorrect');
+  admin.passwordHash = await sha256hex(nw);
+  LS.set('admin_account', admin);
+  alert('Password changed');
+}
+
+function saveRecovery(){
+  const code = document.getElementById('setting_recovery_email').value.trim();
+  if(!code) return alert('Enter recovery email');
+  const admin = LS.get('admin_account');
+  admin.recoveryEmail = code; LS.set('admin_account', admin);
+  alert('Recovery email saved. Keep it safe.');
+}
+
+function wipeAll(){
+  if(!confirm('This will remove ALL site data and users. Export first! Continue?')) return;
+  localStorage.removeItem('cms_data');
+  localStorage.removeItem('admin_account');
+  localStorage.removeItem('cms_logged');
+  location.reload();
+}
+
+function exportBackup(){
+  const data = { admin_account: LS.get('admin_account'), cms_data: LS.get('cms_data') };
+  document.getElementById('exportText').value = JSON.stringify(data, null, 2);
+  document.getElementById('exportModal').style.display='block';
+}
+function downloadBackup(){
+  const json = document.getElementById('exportText').value;
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'cms-backup.json'; a.click(); URL.revokeObjectURL(url);
+}
+
+function importBackup(e){
+  const file = (e.target && e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if(parsed.cms_data) LS.set('cms_data', parsed.cms_data);
+      if(parsed.admin_account) LS.set('admin_account', parsed.admin_account);
+      alert('Imported backup. Reloading...'); location.reload();
+    } catch(err){ alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+}
+
+function openExport(){ document.getElementById('exportModal').style.display='block'; }
+function closeExport(){ document.getElementById('exportModal').style.display='none'; }
+function openImport(){ document.getElementById('importModal').style.display='block'; }
+function closeImport(){ document.getElementById('importModal').style.display='none'; }
+
+function updatePreview(){
+  const data = LS.get('cms_data');
+  document.getElementById('previewHeroTitle').textContent = data.hero.title || '';
+  document.getElementById('previewHeroDesc').textContent = data.hero.desc || '';
+  document.getElementById('topTitle').textContent = data.site.title || 'Site';
+  document.getElementById('topSub').textContent = data.site.subtitle || '';
+  document.getElementById('siteTitle').textContent = data.site.title || 'Site';
+  document.getElementById('siteSubtitle').textContent = data.site.subtitle || '';
+}
+
+function showSection(key){
+  document.querySelectorAll('.sectionView').forEach(el=>el.style.display='none');
+  const el = document.getElementById('section_' + key);
+  if(el) el.style.display='block';
+  if(key==='dashboard') updatePreview();
+}
+
+function logoutAdmin(){ localStorage.removeItem('cms_logged'); alert('Logged out'); location.reload(); }
+
+(async function boot(){
+  await initDefault();
+  const logged = localStorage.getItem('cms_logged');
+  if(logged){ openAdmin(); } else { document.getElementById('loginView').style.display='block'; document.getElementById('forgotView').style.display='none'; document.getElementById('adminApp').style.display='none'; document.getElementById('firstRunNotice').style.display='block'; document.body.classList.add('login-mode'); }
+})();
+</script>
+
+</body>
+</html>
